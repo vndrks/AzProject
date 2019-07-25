@@ -11,6 +11,8 @@ using namespace std;
 TestSha256::TestSha256()
 {
 	unsigned char digestSHA256[SHA256_DIGEST_LENGTH];
+	unsigned char digestSHA256_2[SHA256_DIGEST_LENGTH];
+	
 	char chStr[] = "TestSha256.";
 
 	SHA256_CTX ctxSHA256;
@@ -31,7 +33,17 @@ TestSha256::TestSha256()
 		sprintf(&chMdString[nCnt * 2], "%02x", (unsigned int)digestSHA256[nCnt]);
 	}
 
+	printf("##### %d\n", sizeof(digestSHA256));
 	std::cout << "\"" << chStr << "\" to SHA256 Digest : " << chMdString << endl;
+
+	SHA256((unsigned char*)& digestSHA256, sizeof(digestSHA256), (unsigned char*)& digestSHA256_2);
+	for (int nCnt = 0; nCnt < SHA256_DIGEST_LENGTH; ++nCnt)
+	{
+		sprintf(&chMdString[nCnt * 2], "%02x", (unsigned int)digestSHA256_2[nCnt]);
+	}
+	
+	printf("#####_2 %d\n", sizeof(digestSHA256_2));
+	std::cout << "\"" << chStr << "\" to SHA256 Digest_2 : " << chMdString << endl;
 
 	CreateSignature((unsigned char*)chMdString);
 }

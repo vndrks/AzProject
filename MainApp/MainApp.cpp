@@ -12,19 +12,59 @@
 
 #include <AzNetwork/AcIOService.h>
 #include <AcApplication.h>
+#include <AzComponents/AzC_Crypto/AcSha256.h>
+
+#include <boost/archive/text_iarchive.hpp>
+#include <boost/archive/text_oarchive.hpp>
+#include <boost/serialization/base_object.hpp>
 
 using namespace std;
 using namespace AzNetwork;
 
 int main(int argc, char* argv[])
 {
+
+	AzComponents::AcSha256 aa(10);
+	
+	ofstream output("./output.txt", ios::binary);
+
+	boost::archive::text_oarchive oar(output);
+	oar << aa;
+	output.close();
+
+	ifstream input("./output.txt", ios::binary);
+	boost::archive::text_iarchive iar(input);
+
+	AzComponents::AcSha256 aaa;
+	iar >> aaa;
+	std::string strTmp = aaa.getHash();
+	printf("#######111 Hash : %s \n", strTmp.c_str());
+
+
+
+	
+	
+
+	//TestModule::TestSha256 sha256;
+
+	/*
 	AppBase::App().Startup();
 	AppBase::App().Execute();
 	TestModule::TestGenKeyPair genKeyPair;
 	int nRet = genKeyPair.GenerateKey();
 
 	printf("Result : %d\n", nRet);
-	
+
+	unsigned int nCnt = 0;
+	while (1)
+	{
+		sleep(1);
+		++nCnt;
+
+		if (nCnt > 20)
+			break;
+	}
+	*/
 	/*
 	AzNetwork::AcIOService service;
 	service.test();

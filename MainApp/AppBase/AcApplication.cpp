@@ -26,34 +26,56 @@ void AcApplication::Startup()
 {
 	std::shared_ptr<boost::asio::io_service> ioService = std::make_shared<boost::asio::io_service>();
 
+	std::shared_ptr<boost::asio::signal_set> sigSetInt(new boost::asio::signal_set(*m_ioService, SIGINT));
+	
+	sigSetInt->async_wait([sigSetInt, this](const boost::system::error_code& err, int num) {
+		char chTmp[1024];
+		printf("ERROR : %s \n", err.message(chTmp, sizeof(chTmp)));
+		sigSetInt->cancel();
+	});
 	// todo ...
 
+	
+	
+	//std::thread thread([ioService]() { ioService->run(); });
+	std::thread thread([this]() { nRt = TestPrint(1); });
+
+	std::thread thread2([this]() {nRt = TestPrint(2); });
+	
+	
+//	thread.join();
+//	thread2.join();
+	
+	thread.detach();
+	thread2.detach();
+	
 	// end
-	std::thread sigThread([ioService]() { ioService->run(); });
-
-	//sigThread.join();
-	sigThread.detach();
-
+	printf("###### %d \n", nRt);
 }
 
 void AcApplication::Execute()
 {
-	TestPrint();
+	//TestPrint();
 	//m_ioService->run();
 }
 
-void AcApplication::TestPrint()
+int AcApplication::TestPrint(int nThreadNum)
 {
 	printf("TestTest\n");
 
 	int nCnt = 0;
 	while (1)
 	{
-		printf("Test%d \n", nCnt);
-		if (nCnt == 10000) break;
+		sleep(1);
+		printf("[%d] Test%d \n", nThreadNum, nCnt);
+		if (nCnt == 10000)
+		{
+			return nCnt;
+		}
 		++nCnt;
 	}
 	
+	return nCnt;
 }
 
 AcApplication& AppBase::App()

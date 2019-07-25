@@ -17,9 +17,10 @@ public:
 	void	Startup();
 	void	Execute();
 
-	static void	TestPrint();
-
+	int	TestPrint(int nThreadNum);
+	
 private:
+	int nRt;
 	std::shared_ptr<boost::asio::io_service> m_ioService;
 };
 
